@@ -8,4 +8,4 @@
 - ssm manager and not ssh (blocked)
 - vpc endpoints for system manager 
 
-
+![image](/docs/securityRDS.png)
