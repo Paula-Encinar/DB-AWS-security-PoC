@@ -10,6 +10,9 @@
  
     ![image](/docs/encryptsnapshot.png)
 
+* Once this snapshot has been encrypted, the next action is to restore the snapshot, which allows you to create an encrypted database from the snapshot of your current database. You will now be able to see in the new database configuration that it is encrypted.
+
+    ![image](/docs/databaseencrypted.png) 
 
 ## Deploy database on the private subnet
 
