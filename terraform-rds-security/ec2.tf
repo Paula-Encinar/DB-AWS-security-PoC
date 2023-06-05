@@ -49,7 +49,7 @@ data "aws_ami" "amazon-linux" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = data.aws_ami.amazon-windows.id
+  ami           = data.aws_ami.amazon-linux.id
   instance_type = "t2.micro"
   iam_instance_profile = aws_iam_instance_profile.dev-resources-iam-profile.name
 
