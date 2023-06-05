@@ -16,10 +16,13 @@
 
 ## Deploy database on the private subnet
 
+It is recommended to have the databases deployed on a private subnet. Let's suppose that in AWS we create a VPC with two public subnets and two private subnets, then the deployment of the databases has to be deployed on the private subnets, for this there are several components involved.  
+
 Resources to have in count 
+* Private subnets
+* BBDD subnets groups  
 * Network ACLs 
 * Roles and policies 
-* private subnets 
 * ssm manager and not ssh (blocked)
 * vpc endpoints for system manager 
 
