@@ -16,14 +16,26 @@
 
 ## Deploy database on the private subnet
 
-It is recommended to have the databases deployed on a private subnet. Let's suppose that in AWS we create a VPC with two public subnets and two private subnets, then the deployment of the databases has to be deployed on the private subnets, for this there are several components involved.  
+It is recommended to have the databases deployed on a private subnet. Let's suppose that in AWS we create a VPC with two public subnets and two private subnets, then the deployment of the databases has to be deployed on the private subnets, for this there are several resources involved.  
 
 Resources to have in count 
 * Private subnets
-* BBDD subnets groups  
+* BBDD subnets groups
+* EC2 instance   
 * Network ACLs 
 * Roles and policies 
 * ssm manager and not ssh (blocked)
 * vpc endpoints for system manager 
+
+We will gradually describe each of these resources as we go along. As mentioned above, in this example we will have two private subnets. For the database to be deployed on the private subnet the first thing to do is in the resource *subnet group* which belongs to the database resource to add the two private subnets that will be assigned to the database. It is also important to link to the database a security group with its default port.
+
+Once the database is on the private subnet, how do you access it now from local? This is the typical question that any developer would ask since they work with the database on a daily basis. 
+
+The next resource to create in order to access the database is an EC2 instance that will work as a bastion server and will also be hosted on the private subnet for security reasons.
+
+In this case the EC2 instance will work as a jump machine, but this will not be through SSH as is common. Why? Because the SSH and RDP ports have been blocked through the Network ACLs configured because these accesses cannot be controlled by AWS as such and also because it prevents the private keys from being on the developers' computers.
+
+
+
 
 ![image](/docs/securityRDS.png)
