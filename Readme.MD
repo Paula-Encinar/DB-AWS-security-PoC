@@ -47,6 +47,10 @@ What is AWS Session Manager?
 
 Session Manager is a fully managed AWS Systems Manager capability. Session Manager provides secure, auditable node management without the need to open ingress ports, maintain bastion hosts or manage SSH keys.
 
+VPC Endpoints 
+
+It’s recommended to use VPC Endpoints for session manager so that the network traffic between your managed instances, Systems Manager, and Amazon EC2 is restricted to the Amazon network.
+
 
 ![image](/docs/SessionManager.png)
 
