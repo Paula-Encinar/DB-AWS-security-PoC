@@ -36,6 +36,8 @@ The next resource to create in order to access the database is an EC2 instance t
 In this case the EC2 instance will work as a jump machine, but this will not be through SSH as is common. Why? Because the SSH and RDP ports have been blocked through the Network ACLs configured because these accesses cannot be controlled by AWS as such and also because it prevents the private keys from being on the developers' computers.
 
 
+![image](/docs/SessionManager.png)
+
 
 
 ![image](/docs/securityRDS.png)
