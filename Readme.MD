@@ -43,6 +43,10 @@ The scenario is as follows:
 
 As you can see the other resources mentioned above come into the picture, AWS Session Manager, VPC endpoints to enable this port forwarding and IAM roles and policies to make the jump across the EC2 instance possible as well as access to the EC2 instance itself which is also accessed through the Session Manager.
 
+What is AWS Session Manager? 
+
+Session Manager is a fully managed AWS Systems Manager capability. Session Manager provides secure, auditable node management without the need to open ingress ports, maintain bastion hosts or manage SSH keys.
+
 
 ![image](/docs/SessionManager.png)
 
