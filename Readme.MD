@@ -35,9 +35,16 @@ The next resource to create in order to access the database is an EC2 instance t
 
 In this case the EC2 instance will work as a jump machine, but this will not be through SSH as is common. Why? Because the SSH and RDP ports have been blocked through the Network ACLs configured because these accesses cannot be controlled by AWS as such and also because it prevents the private keys from being on the developers' computers.
 
+How can the database be accessed locally?
+
+The scenario is as follows:
+
+![image](/docs/securityRDS.png)
+
+As you can see the other resources mentioned above come into the picture, AWS Session Manager, VPC endpoints to enable this port forwarding and IAM roles and policies to make the jump across the EC2 instance possible as well as access to the EC2 instance itself which is also accessed through the Session Manager.
+
 
 ![image](/docs/SessionManager.png)
 
 
 
-![image](/docs/securityRDS.png)
