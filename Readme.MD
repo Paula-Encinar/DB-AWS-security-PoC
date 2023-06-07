@@ -118,8 +118,15 @@ As you can see there are several values to complete:
 
 When you run this command you should see that a session has been started on the port you have chosen and is waiting for connections, as in the following image:  
 
-
 ![image](/docs/SSMPortForwarding.png)
+
+## Access the DDBB through a SQL client
+
+Now open your SQL client on your computer and you can access your DDBB in this case postgres type using as host "localhost" and as port the port you have set as "localPortNumber", enter the database username and password and you will be inside, here you can see an example: 
+
+![image](/docs/SQLClient.png)
+
+
 
 
 ![image](/docs/SessionManager.png)
