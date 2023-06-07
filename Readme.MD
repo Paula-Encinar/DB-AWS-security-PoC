@@ -51,7 +51,18 @@ Session Manager is a fully managed AWS Systems Manager capability. Session Manag
 
 It’s recommended to use VPC Endpoints for session manager so that the network traffic between your managed instances, Systems Manager, and Amazon EC2 is restricted to the Amazon network.
 
+The following VPC endpoints have been configured:
 
+* com.amazonaws.eu-west-2.ssm: The endpoint for the Systems Manager service.
+* com.amazonaws.eu-west-2.ssmmessages: This endpoint is required only if you’re connecting to your instances through a secure data channel using Session Manager.
+* com.amazonaws.eu-west-2.ec2: The endpoint for the EC2 service
+* com.amazonaws.eu-west-2.ec2messages: Systems Manager uses this endpoint to make calls from SSM Agent to the Systems Manager service.
+
+With these endpoints it is possible to access any EC2 instance through Session Manager without using SSH as well as a secure connection to a database through a bastion server.
+
+
+**IAM Roles and Policies**
+For the EC2 instance to have permissions to use Systems Manager it is necessary to attach a role with a policy called *AmazonSSMManagedInstanceCore* to enable this use. 
 
 
 ![image](/docs/SessionManager.png)
