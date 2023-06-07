@@ -1,5 +1,15 @@
 # How to keep a database secure on AWS
-## Encrypt databases
+This README provides instructions on how to keep a database secure on AWS. It covers topics such as encrypting databases and deploying them on private subnets using AWS services like Session Manager and VPC endpoints. The document also includes steps for accessing the database using AWS CLI and SSM, as well as accessing the database through a SQL client.
+
+## Table of Contents
+1. Encrypt Databases
+2. Deploy Database on Private Subnet
+3. Session Manager Plugin (AWS CLI)
+4. Access EC2 Instances with AWS CLI and SSM
+5. SSM Port Forwarding Session to Remote Host
+6. Access the Database Through a SQL Client
+
+### Encrypt databases
  AWS from January 2023 has decided that all databases created from that date onwards will be encrypted, but databases created prior to this date, if not encrypted, will be encrypted manually.
 
  Let's assume that our database is not encrypted and the customer asks us to encrypt all databases, how do we do it? 
@@ -14,7 +24,7 @@
 
     ![image](/docs/databaseencrypted.png) 
 
-## Deploy database on the private subnet
+### Deploy database on the private subnet
 
 It is recommended to have the databases deployed on a private subnet. Let's suppose that in AWS we create a VPC with two public subnets and two private subnets, then the deployment of the databases has to be deployed on the private subnets, for this there are several resources involved.  
 
@@ -65,7 +75,7 @@ With these endpoints it is possible to access any EC2 instance through Session M
 For the EC2 instance to have permissions to use Systems Manager it is necessary to attach a role with a policy called *AmazonSSMManagedInstanceCore* to enable this use. 
 
 
-## Session Manager Plugin (AWS CLI)
+### Session Manager Plugin (AWS CLI)
 
 In order to access the database once it is deployed on the private subnet from our local computer, we need to have AWS CLI installed and then install the Session Manager plugin. The steps are as follows:
 
@@ -74,7 +84,7 @@ In order to access the database once it is deployed on the private subnet from o
 2. Install Session Manager Pluging: depending on your OS follow this [guide](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html#install-plugin-macos)
 
 
-## Access EC2 instances with AWS CLI and SSM
+### Access EC2 instances with AWS CLI and SSM
 
 As the SSH port is blocked the way to access the EC2 working as Bastion Server is through Session Manager by starting a session as follows: 
 
@@ -90,7 +100,7 @@ As you can see there are two fields to complete:
 
 Finally, to access through SSM not just any configuration in the EC2, you must have an associated role which gives permissions to make use of this service.
 
-## SSM Port Forwarding Session To Remote Host
+### SSM Port Forwarding Session To Remote Host
 
 To create a tunnel to access the DDBBs you have to know the iD of the EC2 instance that will be in charge of working as a bastion to give access to the DDBB, each environment has an instance. 
 
@@ -120,7 +130,7 @@ When you run this command you should see that a session has been started on the 
 
 ![image](/docs/SSMPortForwarding.png)
 
-## Access the DDBB through a SQL client
+### Access the DDBB through a SQL client
 
 Now open your SQL client on your computer and you can access your DDBB in this case postgres type using as host "localhost" and as port the port you have set as "localPortNumber", enter the database username and password and you will be inside, here you can see an example: 
 
@@ -136,7 +146,6 @@ And if you look at your SQL client you will see that it has accessed your databa
 
 ![image](/docs/DatabaseSQLClient.png)
 
-
-
+If we access now to Systems Manager in AWS to the Session Manager section, you can see that I have made this access, therefore any access to EC2 and databases is registered, being able to control who accesses these resources. 
 
 ![image](/docs/SessionManager.png)
