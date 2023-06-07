@@ -34,17 +34,22 @@ resource "aws_iam_role_policy_attachment" "dev-resources-ssm-policy" {
 }
 
 
-data "aws_ami" "amazon-windows" {
+data "aws_ami" "amazon-linux" {
   most_recent = true
   owners      = ["amazon"]
   filter {
     name   = "name"
-    values = ["Windows_Server-2012-R2_RTM-English-64Bit-Base-*"]
+    values = ["amzn2-ami-hvm-*"]  # Update with the desired Linux AMI name pattern
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 }
 
 resource "aws_instance" "app_server" {
-  ami           = data.aws_ami.amazon-windows.id
+  ami           = data.aws_ami.amazon-linux.id
   instance_type = "t2.micro"
   iam_instance_profile = aws_iam_instance_profile.dev-resources-iam-profile.name
 

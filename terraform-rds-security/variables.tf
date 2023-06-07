@@ -9,5 +9,8 @@ variable "rds_instance_type" {
 
  variable "rds_snapshop_id" {
     default = ""
-   
  }
+
+variable "environment" {
+  default = "testing"
+}
