@@ -126,6 +126,16 @@ Now open your SQL client on your computer and you can access your DDBB in this c
 
 ![image](/docs/SQLClient.png)
 
+If you access the terminal where you have this session open you will see a message like this: 
+
+```
+Connection accepted for session [paula-encinar-X].
+```
+
+And if you look at your SQL client you will see that it has accessed your database without any problem. 
+
+![image](/docs/DatabaseSQLClient.png)
+
 
 
 
