@@ -33,9 +33,7 @@ To ensure better security, it is recommended to deploy databases on private subn
 5. Create an EC2 instance as a bastion server and host it on the private subnet.
 6. Use AWS Session Manager, VPC endpoints, IAM roles, and policies to enable access to the EC2 instance and establish secure connections to the database.
 
-How can the database be accessed locally?
-
-The scenario is as follows:
+How can the database be accessed locally?. The scenario is as follows:
 
 ![image](/docs/securityRDS.png)
 
