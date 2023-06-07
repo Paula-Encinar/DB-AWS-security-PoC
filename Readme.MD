@@ -65,7 +65,61 @@ With these endpoints it is possible to access any EC2 instance through Session M
 For the EC2 instance to have permissions to use Systems Manager it is necessary to attach a role with a policy called *AmazonSSMManagedInstanceCore* to enable this use. 
 
 
+## Session Manager Plugin (AWS CLI)
+
+In order to access the database once it is deployed on the private subnet from our local computer, we need to have AWS CLI installed and then install the Session Manager plugin. The steps are as follows:
+
+1. Install AWS CLI: depending on your OS follow this [guide](https://docs.aws.amazon.com/es_es/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions)
+
+2. Install Session Manager Pluging: depending on your OS follow this [guide](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html#install-plugin-macos)
+
+
+## Access EC2 instances with AWS CLI and SSM
+
+As the SSH port is blocked the way to access the EC2 working as Bastion Server is through Session Manager by starting a session as follows: 
+
+```
+aws ssm start-session --target <EC2 instance ID> --region <region name>
+```
+
+As you can see there are two fields to complete:
+
+* **EC2 instance ID**: ID of the EC2 instance you want to access
+
+* **Region name**: name of the region where the instance you want to access is located
+
+Finally, to access through SSM not just any configuration in the EC2, you must have an associated role which gives permissions to make use of this service.
+
+## SSM Port Forwarding Session To Remote Host
+
+To create a tunnel to access the DDBBs you have to know the iD of the EC2 instance that will be in charge of working as a bastion to give access to the DDBB, each environment has an instance. 
+
+To access from your PC you have to open your terminal and run a command that provides a Port Forwarding through the AWS System Manager, the command is as follows:  
+
+```
+aws ssm start-session --target <EC2 instance ID> --region <region name> --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters '{"host":["<database endpoint >"],"portNumber":["<database port>"], "localPortNumber":["<local port>"]}'
+```
+
+As you can see there are several values to complete: 
+
+* **EC2 instance ID**: EC2 instance ID (bastion server)
+
+* **Region name**: name of the region where the DDBBs and EC2 instance are deployed
+
+* **Document-name**: this value in this case is fixed which is a system manager document which allows to perform this Port Forwarding
+
+* **parameters**: here you can see that there are several values between {} which we discuss below: 
+
+    * **host**: database endpoint 
+
+    * **portNumber**: port of your database, in case of postgres the port is 5432
+
+    * **localPortNumber**:  the port on your computer through which you will access the database
+
+When you run this command you should see that a session has been started on the port you have chosen and is waiting for connections, as in the following image:  
+
+
+![image](/docs/SSMPortForwarding.png)
+
+
 ![image](/docs/SessionManager.png)
-
-
-
