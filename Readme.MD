@@ -27,7 +27,7 @@ Resources to have in count
 * ssm manager and not ssh (blocked)
 * vpc endpoints for system manager 
 
-We will gradually describe each of these resources as we go along. As mentioned above, in this example we will have two private subnets. For the database to be deployed on the private subnet the first thing to do is in the resource *subnet group* which belongs to the database resource to add the two private subnets that will be assigned to the database. It is also important to link to the database a security group with its default port.
+We will gradually describe each of these resources as we go along. As mentioned above, in this example we will have two private subnets. For the database to be deployed on the private subnet the first thing to do is in the resource **subnet group** which belongs to the database resource to add the two private subnets that will be assigned to the database. It is also important to link to the database a security group with its default port.
 
 Once the database is on the private subnet, how do you access it now from local? This is the typical question that any developer would ask since they work with the database on a daily basis. 
 
@@ -43,13 +43,15 @@ The scenario is as follows:
 
 As you can see the other resources mentioned above come into the picture, AWS Session Manager, VPC endpoints to enable this port forwarding and IAM roles and policies to make the jump across the EC2 instance possible as well as access to the EC2 instance itself which is also accessed through the Session Manager.
 
-What is AWS Session Manager? 
+**What is AWS Session Manager?** 
 
 Session Manager is a fully managed AWS Systems Manager capability. Session Manager provides secure, auditable node management without the need to open ingress ports, maintain bastion hosts or manage SSH keys.
 
-VPC Endpoints 
+**VPC Endpoints** 
 
 It’s recommended to use VPC Endpoints for session manager so that the network traffic between your managed instances, Systems Manager, and Amazon EC2 is restricted to the Amazon network.
+
+
 
 
 ![image](/docs/SessionManager.png)
