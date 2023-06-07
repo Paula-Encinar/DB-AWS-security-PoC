@@ -22,26 +22,16 @@ AWS requires all databases created after January 2023 to be encrypted. However, 
 
     ![image](/docs/databaseencrypted.png) 
 
-  ### Deploy database on the private subnet
+### Deploy database on the private subnet
 
-It is recommended to have the databases deployed on a private subnet. Let's suppose that in AWS we create a VPC with two public subnets and two private subnets, then the deployment of the databases has to be deployed on the private subnets, for this there are several resources involved.  
+To ensure better security, it is recommended to deploy databases on private subnets. Follow these steps to deploy a database on a private subnet:
 
-Resources to have in count 
-* Private subnets
-* BBDD subnets groups
-* EC2 instance   
-* Network ACLs 
-* Roles and policies 
-* ssm manager and not ssh (blocked)
-* vpc endpoints for system manager 
-
-We will gradually describe each of these resources as we go along. As mentioned above, in this example we will have two private subnets. For the database to be deployed on the private subnet the first thing to do is in the resource **subnet group** which belongs to the database resource to add the two private subnets that will be assigned to the database. It is also important to link to the database a security group with its default port.
-
-Once the database is on the private subnet, how do you access it now from local? This is the typical question that any developer would ask since they work with the database on a daily basis. 
-
-The next resource to create in order to access the database is an EC2 instance that will work as a bastion server and will also be hosted on the private subnet for security reasons.
-
-In this case the EC2 instance will work as a jump machine, but this will not be through SSH as is common. Why? Because the SSH and RDP ports have been blocked through the Network ACLs configured because these accesses cannot be controlled by AWS as such and also because it prevents the private keys from being on the developers' computers.
+1. Set up private subnets within your AWS Virtual Private Cloud (VPC).
+2. Configure a subnet group for the database resource and add the private subnets.
+3. Associate a security group with the database and configure the necessary port access.
+4. Configure Network ACLs to block incoming ports for SSH (so you avoid also managing ssh keys) and RDP.  
+5. Create an EC2 instance as a bastion server and host it on the private subnet.
+6. Use AWS Session Manager, VPC endpoints, IAM roles, and policies to enable access to the EC2 instance and establish secure connections to the database.
 
 How can the database be accessed locally?
 
@@ -61,10 +51,10 @@ It’s recommended to use VPC Endpoints for session manager so that the network 
 
 The following VPC endpoints have been configured:
 
-* com.amazonaws.eu-west-2.ssm: The endpoint for the Systems Manager service.
-* com.amazonaws.eu-west-2.ssmmessages: This endpoint is required only if you’re connecting to your instances through a secure data channel using Session Manager.
-* com.amazonaws.eu-west-2.ec2: The endpoint for the EC2 service
-* com.amazonaws.eu-west-2.ec2messages: Systems Manager uses this endpoint to make calls from SSM Agent to the Systems Manager service.
+1. com.amazonaws.eu-west-2.ssm: The endpoint for the Systems Manager service.
+2. com.amazonaws.eu-west-2.ssmmessages: This endpoint is required only if you’re connecting to your instances through a secure data channel using Session Manager.
+3. com.amazonaws.eu-west-2.ec2: The endpoint for the EC2 service
+4. com.amazonaws.eu-west-2.ec2messages: Systems Manager uses this endpoint to make calls from SSM Agent to the Systems Manager service.
 
 With these endpoints it is possible to access any EC2 instance through Session Manager without using SSH as well as a secure connection to a database through a bastion server.
 
