@@ -60,6 +60,7 @@ With these endpoints it is possible to access any EC2 instance through Session M
 
 
 **IAM Roles and Policies**
+
 For the EC2 instance to have permissions to use Systems Manager it is necessary to attach a role with a policy called *AmazonSSMManagedInstanceCore* to enable this use. 
 
 
