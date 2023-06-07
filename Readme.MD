@@ -10,21 +10,19 @@ This README provides instructions on how to keep a database secure on AWS. It co
 6. Access the Database Through a SQL Client
 
 ### Encrypt databases
- AWS from January 2023 has decided that all databases created from that date onwards will be encrypted, but databases created prior to this date, if not encrypted, will be encrypted manually.
+AWS requires all databases created after January 2023 to be encrypted. However, databases created prior to this date need to be manually encrypted. Follow these steps to encrypt an existing database:
 
- Let's assume that our database is not encrypted and the customer asks us to encrypt all databases, how do we do it? 
+1. Take a snapshot of the current database.
+2. Access the created snapshot and choose the "Copy snapshot" action.
+3. In the copy snapshot action, select the option to encrypt the snapshot.
 
- * Take a snapshot of the current database. 
-
- *  Access the snapshot when it has been created and take a new action "copy snapshot". In this action there is a very important option, you can encrypt the snapshot, as you can see below: 
- 
-    ![image](/docs/encryptsnapshot.png)
-
-* Once this snapshot has been encrypted, the next action is to restore the snapshot, which allows you to create an encrypted database from the snapshot of your current database. You will now be able to see in the new database configuration that it is encrypted.
+     ![image](/docs/encryptsnapshot.png)
+4. Once the snapshot is encrypted, restore it to create an encrypted database.
+5. Verify the new database configuration to confirm encryption.
 
     ![image](/docs/databaseencrypted.png) 
 
-### Deploy database on the private subnet
+  ### Deploy database on the private subnet
 
 It is recommended to have the databases deployed on a private subnet. Let's suppose that in AWS we create a VPC with two public subnets and two private subnets, then the deployment of the databases has to be deployed on the private subnets, for this there are several resources involved.  
 
@@ -77,7 +75,7 @@ For the EC2 instance to have permissions to use Systems Manager it is necessary 
 
 ### Session Manager Plugin (AWS CLI)
 
-In order to access the database once it is deployed on the private subnet from our local computer, we need to have AWS CLI installed and then install the Session Manager plugin. The steps are as follows:
+To access the database deployed on the private subnet from your local computer, you need to have AWS CLI installed and the Session Manager plugin. Follow these steps to install AWS CLI and the Session Manager plugin:
 
 1. Install AWS CLI: depending on your OS follow this [guide](https://docs.aws.amazon.com/es_es/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions)
 
@@ -86,53 +84,42 @@ In order to access the database once it is deployed on the private subnet from o
 
 ### Access EC2 instances with AWS CLI and SSM
 
-As the SSH port is blocked the way to access the EC2 working as Bastion Server is through Session Manager by starting a session as follows: 
+As SSH and RDP ports are blocked for security reasons, you can access the EC2 instances through AWS Session Manager. To start a session on an EC2 instance, use the following command:
 
 ```
 aws ssm start-session --target <EC2 instance ID> --region <region name>
 ```
 
-As you can see there are two fields to complete:
-
-* **EC2 instance ID**: ID of the EC2 instance you want to access
-
-* **Region name**: name of the region where the instance you want to access is located
-
-Finally, to access through SSM not just any configuration in the EC2, you must have an associated role which gives permissions to make use of this service.
+Make sure to replace <EC2 instance ID> with the actual ID of the EC2 instance you want to access and <region name> with the name of the region where the instance is located. You also need to have the required IAM roles and policies attached to the EC2 instance for using Session Manager.
 
 ### SSM Port Forwarding Session To Remote Host
 
-To create a tunnel to access the DDBBs you have to know the iD of the EC2 instance that will be in charge of working as a bastion to give access to the DDBB, each environment has an instance. 
-
-To access from your PC you have to open your terminal and run a command that provides a Port Forwarding through the AWS System Manager, the command is as follows:  
+To create a tunnel and access the databases, you need to run a command through AWS Systems Manager that provides port forwarding. Use the following command:  
 
 ```
 aws ssm start-session --target <EC2 instance ID> --region <region name> --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters '{"host":["<database endpoint >"],"portNumber":["<database port>"], "localPortNumber":["<local port>"]}'
 ```
 
-As you can see there are several values to complete: 
+Replace the placeholders with the appropriate values:
 
-* **EC2 instance ID**: EC2 instance ID (bastion server)
+* **EC2 instance ID**: ID of the EC2 instance serving as the bastion server.
+* **region name**: Name of the region where the databases and EC2 instance are deployed.
+* **database endpoint**: Endpoint of the database you want to access.
+* **database port**: Port number of the database (e.g., 5432 for PostgreSQL).
+* **local port**: Port number on your local computer for accessing the database.
 
-* **Region name**: name of the region where the DDBBs and EC2 instance are deployed
-
-* **Document-name**: this value in this case is fixed which is a system manager document which allows to perform this Port Forwarding
-
-* **parameters**: here you can see that there are several values between {} which we discuss below: 
-
-    * **host**: database endpoint 
-
-    * **portNumber**: port of your database, in case of postgres the port is 5432
-
-    * **localPortNumber**:  the port on your computer through which you will access the database
-
-When you run this command you should see that a session has been started on the port you have chosen and is waiting for connections, as in the following image:  
+This command establishes a port forwarding session using AWS Session Manager.
 
 ![image](/docs/SSMPortForwarding.png)
 
 ### Access the DDBB through a SQL client
 
-Now open your SQL client on your computer and you can access your DDBB in this case postgres type using as host "localhost" and as port the port you have set as "localPortNumber", enter the database username and password and you will be inside, here you can see an example: 
+After setting up the port forwarding session, you can use a SQL client on your local computer to access the database. Configure the SQL client with the following details:
+
+* Host: localhost
+* Port: The local port number you specified during the port forwarding session setup.
+* Username: Database username
+* Password: Database password
 
 ![image](/docs/SQLClient.png)
 
@@ -146,6 +133,8 @@ And if you look at your SQL client you will see that it has accessed your databa
 
 ![image](/docs/DatabaseSQLClient.png)
 
-If we access now to Systems Manager in AWS to the Session Manager section, you can see that I have made this access, therefore any access to EC2 and databases is registered, being able to control who accesses these resources. 
+It's worth noting that all access to EC2 instances and databases through Session Manager is logged and can be monitored via AWS Systems Manager's Session Manager section.
 
 ![image](/docs/SessionManager.png)
+
+By following these instructions, you can ensure secure access to your databases on AWS while maintaining the necessary security measures and compliance requirements.
