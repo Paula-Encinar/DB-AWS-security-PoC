@@ -29,8 +29,8 @@ To ensure better security, it is recommended to deploy databases on private subn
 1. Set up private subnets within your AWS Virtual Private Cloud (VPC).
 2. Configure a subnet group for the database resource and add the private subnets.
 3. Associate a security group with the database and configure the necessary port access.
-4. Configure Network ACLs to block incoming ports for SSH (so you avoid also managing ssh keys) and RDP.  
-5. Create an EC2 instance as a bastion server and host it on the private subnet.
+4. Create an EC2 instance as a bastion server and host it on the private subnet.
+5. Configure Network ACLs to block incoming ports for SSH (so you avoid also managing ssh keys) and RDP.  
 6. Use AWS Session Manager, VPC endpoints, IAM roles, and policies to enable access to the EC2 instance and establish secure connections to the database.
 
 How can the database be accessed locally?. The scenario is as follows:
