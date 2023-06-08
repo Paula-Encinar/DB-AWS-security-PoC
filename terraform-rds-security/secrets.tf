@@ -6,10 +6,10 @@ resource "random_password" "random_admin_password" {
 
 
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name = "avs_db_credentials-8"
+  name = "avs_db_credentials-${var.environment}1"
 
   tags = {
-    environment = "Paula_test"
+    Environment = var.environment
   }
 }
 

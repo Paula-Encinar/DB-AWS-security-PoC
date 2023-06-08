@@ -1,10 +1,10 @@
 resource "aws_iam_instance_profile" "dev-resources-iam-profile" {
-  name = "ec2_profile"
+  name = "ec2_profile_${var.environment}"
   role = aws_iam_role.dev-resources-iam-role.name
 }
 
 resource "aws_iam_role" "dev-resources-iam-role" {
-  name        = "dev-ssm-role"
+  name        = "dev-ssm-role_${var.environment}"
   description = "The role for the developer resources EC2"
   assume_role_policy = <<EOF
   {
@@ -17,7 +17,7 @@ resource "aws_iam_role" "dev-resources-iam-role" {
   }
   EOF
   tags = {
-    Environment = "development"
+    Environment = var.environment
   }
 }
 
@@ -59,9 +59,8 @@ resource "aws_instance" "app_server" {
   subnet_id = aws_subnet.private_subnet_1.id
 
   tags = {
-    "Patch Group" = "development"
-    Environment = "development"
-    Name = "Paula_test"
+    Environment = var.environment
+    Name = "bastion_${var.environment}"
     
   }
 
