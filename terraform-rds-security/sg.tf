@@ -1,16 +1,7 @@
 resource "aws_security_group" "sg" {
-  name        = "allow_ssh_Access"
+  name        = "allow_ssh_Access_${var.environment}"
   description = "Allow ssh http inbound traffic"
   vpc_id      = aws_vpc.main.id
-
-  # ingress {
-  #   description      = "SSH from VPC"
-  #   from_port        = 22
-  #   to_port          = 22
-  #   protocol         = "tcp"
-  #   cidr_blocks      = ["0.0.0.0/0"]
-  #   # ipv6_cidr_blocks = ["::/0"]
-  # }
 
   ingress {
     description      = "HTTP from VPC"
@@ -39,12 +30,12 @@ resource "aws_security_group" "sg" {
   }
 
   tags = {
-    Name = "allow_ssh_https"
+    Environment = var.environment
   }
 }
 
 resource "aws_security_group" "rds" {
-  name        = "rds-sg"
+  name        = "rds-sg_${var.environment}"
   description = "Allows access to RDS instances"
   vpc_id      = aws_vpc.main.id
 
@@ -71,6 +62,6 @@ resource "aws_security_group" "rds" {
   }
 
   tags = {
-    environment = "Paula_test"
+    Environment = var.environment
   }
 }
