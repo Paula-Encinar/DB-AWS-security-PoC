@@ -12,5 +12,5 @@ variable "rds_instance_type" {
  }
 
 variable "environment" {
-  default = "testing"
+  default = "KS"
 }
