@@ -6,7 +6,8 @@ resource "aws_vpc" "main" {
 
 
   tags = {
-    Name = "vpc-development"
+    Name = "vpc-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -17,7 +18,8 @@ resource "aws_subnet" "public_subnet_1" {
   map_public_ip_on_launch = true
   cidr_block              = cidrsubnet(var.vpc_cidr, 8, 2)
   tags = {
-    Name = "PublicSubnet01"
+    Name = "PublicSubnet01-${var.environment}}"
+    Environment = var.environment
 
   }
 }
@@ -29,7 +31,8 @@ resource "aws_subnet" "public_subnet_2" {
   cidr_block              = cidrsubnet(var.vpc_cidr, 8, 3)
 
   tags = {
-    Name = "PublicSubnet02"
+    Name = "PublicSubnet02-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -40,7 +43,8 @@ resource "aws_subnet" "private_subnet_1" {
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 0)
 
   tags = {
-    Name = "PrivateSubnet01"
+    Name = "PrivateSubnet01-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -50,7 +54,8 @@ resource "aws_subnet" "private_subnet_2" {
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 1)
   ipv6_cidr_block   = null
   tags = {
-    Name = "PrivateSubnet02"
+    Name = "PrivateSubnet02-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -69,7 +74,8 @@ resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "igw"
+    Name = "igw-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -79,7 +85,8 @@ resource "aws_nat_gateway" "nat_gateway_1" {
   depends_on    = [aws_nat_gateway.nat_gateway_1, aws_subnet.public_subnet_1, aws_internet_gateway.internet_gateway]
 
   tags = {
-    Name = "NatGatewayAZ1"
+    Name = "NatGatewayAZ1-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -90,7 +97,8 @@ resource "aws_nat_gateway" "nat_gateway_2" {
   depends_on = [aws_nat_gateway.nat_gateway_2, aws_subnet.public_subnet_2, aws_internet_gateway.internet_gateway]
 
   tags = {
-    Name = "NatGatewayAZ2"
+    Name = "NatGatewayAZ2-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -106,8 +114,9 @@ resource "aws_route_table" "public_route_table" {
   depends_on = [aws_internet_gateway.internet_gateway]
 
   tags = {
-    Name    = "Public Subnets"
+    Name    = "Public-Subnets-${var.environment}"
     Network = "Public"
+    Environment = var.environment
   }
 }
 
@@ -122,8 +131,9 @@ resource "aws_route_table" "private_route_table_1" {
   depends_on = [aws_internet_gateway.internet_gateway, aws_nat_gateway.nat_gateway_1]
 
   tags = {
-    Name    = "Private Subnet AZ1"
+    Name    = "Private-Subnet-AZ1-${var.environment}"
     Network = "Private01"
+    Environment = var.environment
   }
 }
 
@@ -138,8 +148,9 @@ resource "aws_route_table" "private_route_table_2" {
   depends_on = [aws_internet_gateway.internet_gateway, aws_nat_gateway.nat_gateway_2]
 
   tags = {
-    Name    = "Private Subnet AZ2"
+    Name    = "Private-Subnet-AZ2-${var.environment}"
     Network = "Private02"
+    Environment = var.environment
   }
 }
 
@@ -202,15 +213,6 @@ resource "aws_network_acl" "main" {
     to_port    = 3389
   }
 
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 200
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 32768
-    to_port    = 65535
-  }
-
   egress {
     protocol   = "-1"
     rule_no    = 100
@@ -221,7 +223,8 @@ resource "aws_network_acl" "main" {
   }
 
 tags = {
-    Name = "My VPC ACL"
+    Name = "VPC-ACL-${var.environment}"
+    Environment = var.environment
 }
 } 
 

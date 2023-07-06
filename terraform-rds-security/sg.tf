@@ -1,6 +1,6 @@
 resource "aws_security_group" "sg" {
-  name        = "allow_ssh_Access_${var.environment}"
-  description = "Allow ssh http inbound traffic"
+  name        = "https-access-${var.environment}"
+  description = "Allow https inbound traffic"
   vpc_id      = aws_vpc.main.id
 
   ingress {
@@ -35,7 +35,7 @@ resource "aws_security_group" "sg" {
 }
 
 resource "aws_security_group" "rds" {
-  name        = "rds-sg_${var.environment}"
+  name        = "rds-sg-${var.environment}"
   description = "Allows access to RDS instances"
   vpc_id      = aws_vpc.main.id
 
