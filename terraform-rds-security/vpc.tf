@@ -6,51 +6,56 @@ resource "aws_vpc" "main" {
 
 
   tags = {
-    Name = "vpc-development"
+    Name = "vpc-${var.environment}"
+    Environment = var.environment
   }
 }
 
 // Public subnets
 resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.main.id
-  availability_zone       = "eu-west-2a"
+  availability_zone       = "${var.region}a"
   map_public_ip_on_launch = true
   cidr_block              = cidrsubnet(var.vpc_cidr, 8, 2)
   tags = {
-    Name = "PublicSubnet01"
+    Name = "PublicSubnet01-${var.environment}}"
+    Environment = var.environment
 
   }
 }
 
 resource "aws_subnet" "public_subnet_2" {
   vpc_id                  = aws_vpc.main.id
-  availability_zone       = "eu-west-2b"
+  availability_zone       = "${var.region}b"
   map_public_ip_on_launch = true
   cidr_block              = cidrsubnet(var.vpc_cidr, 8, 3)
 
   tags = {
-    Name = "PublicSubnet02"
+    Name = "PublicSubnet02-${var.environment}"
+    Environment = var.environment
   }
 }
 
 // Private subnets
 resource "aws_subnet" "private_subnet_1" {
   vpc_id            = aws_vpc.main.id
-  availability_zone = "eu-west-2a"
+  availability_zone = "${var.region}a"
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 0)
 
   tags = {
-    Name = "PrivateSubnet01"
+    Name = "PrivateSubnet01-${var.environment}"
+    Environment = var.environment
   }
 }
 
 resource "aws_subnet" "private_subnet_2" {
   vpc_id            = aws_vpc.main.id
-  availability_zone = "eu-west-2b"
+  availability_zone = "${var.region}b"
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 1)
   ipv6_cidr_block   = null
   tags = {
-    Name = "PrivateSubnet02"
+    Name = "PrivateSubnet02-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -69,7 +74,8 @@ resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "igw"
+    Name = "igw-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -79,7 +85,8 @@ resource "aws_nat_gateway" "nat_gateway_1" {
   depends_on    = [aws_nat_gateway.nat_gateway_1, aws_subnet.public_subnet_1, aws_internet_gateway.internet_gateway]
 
   tags = {
-    Name = "NatGatewayAZ1"
+    Name = "NatGatewayAZ1-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -90,7 +97,8 @@ resource "aws_nat_gateway" "nat_gateway_2" {
   depends_on = [aws_nat_gateway.nat_gateway_2, aws_subnet.public_subnet_2, aws_internet_gateway.internet_gateway]
 
   tags = {
-    Name = "NatGatewayAZ2"
+    Name = "NatGatewayAZ2-${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -106,8 +114,9 @@ resource "aws_route_table" "public_route_table" {
   depends_on = [aws_internet_gateway.internet_gateway]
 
   tags = {
-    Name    = "Public Subnets"
+    Name    = "Public-Subnets-${var.environment}"
     Network = "Public"
+    Environment = var.environment
   }
 }
 
@@ -122,8 +131,9 @@ resource "aws_route_table" "private_route_table_1" {
   depends_on = [aws_internet_gateway.internet_gateway, aws_nat_gateway.nat_gateway_1]
 
   tags = {
-    Name    = "Private Subnet AZ1"
+    Name    = "Private-Subnet-AZ1-${var.environment}"
     Network = "Private01"
+    Environment = var.environment
   }
 }
 
@@ -138,8 +148,9 @@ resource "aws_route_table" "private_route_table_2" {
   depends_on = [aws_internet_gateway.internet_gateway, aws_nat_gateway.nat_gateway_2]
 
   tags = {
-    Name    = "Private Subnet AZ2"
+    Name    = "Private-Subnet-AZ2-${var.environment}"
     Network = "Private02"
+    Environment = var.environment
   }
 }
 
@@ -202,15 +213,6 @@ resource "aws_network_acl" "main" {
     to_port    = 3389
   }
 
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 200
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 32768
-    to_port    = 65535
-  }
-
   egress {
     protocol   = "-1"
     rule_no    = 100
@@ -221,7 +223,8 @@ resource "aws_network_acl" "main" {
   }
 
 tags = {
-    Name = "My VPC ACL"
+    Name = "VPC-ACL-${var.environment}"
+    Environment = var.environment
 }
 } 
 
@@ -229,7 +232,7 @@ tags = {
 resource "aws_vpc_endpoint" "ec2" {
   vpc_id       = aws_vpc.main.id
   subnet_ids   = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  service_name = "com.amazonaws.eu-west-2.ec2"
+  service_name = "com.amazonaws.${var.region}.ec2"
   vpc_endpoint_type = "Interface"
   security_group_ids = [
     aws_security_group.sg.id, aws_security_group.rds.id
@@ -240,7 +243,7 @@ resource "aws_vpc_endpoint" "ec2" {
 resource "aws_vpc_endpoint" "ec2messages" {
   vpc_id       = aws_vpc.main.id
   subnet_ids   = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  service_name = "com.amazonaws.eu-west-2.ec2messages"
+  service_name = "com.amazonaws.${var.region}.ec2messages"
   vpc_endpoint_type = "Interface"
   security_group_ids = [
     aws_security_group.sg.id, aws_security_group.rds.id
@@ -251,7 +254,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
 resource "aws_vpc_endpoint" "ssmmessages" {
   vpc_id       = aws_vpc.main.id
   subnet_ids   = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  service_name = "com.amazonaws.eu-west-2.ssmmessages"
+  service_name = "com.amazonaws.${var.region}.ssmmessages"
   vpc_endpoint_type = "Interface"
   security_group_ids = [
     aws_security_group.sg.id, aws_security_group.rds.id
@@ -262,7 +265,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id       = aws_vpc.main.id
   subnet_ids   = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  service_name = "com.amazonaws.eu-west-2.ssm"
+  service_name = "com.amazonaws.${var.region}.ssm"
   vpc_endpoint_type = "Interface"
   security_group_ids = [
     aws_security_group.sg.id, aws_security_group.rds.id

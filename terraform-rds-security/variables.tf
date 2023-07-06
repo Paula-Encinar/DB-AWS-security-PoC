@@ -12,5 +12,10 @@ variable "rds_instance_type" {
  }
 
 variable "environment" {
-  default = "testing"
+  default = "ks"
+}
+
+variable "region" {
+  default = "eu-west-2"
+  
 }
