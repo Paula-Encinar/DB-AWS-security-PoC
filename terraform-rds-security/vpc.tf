@@ -14,7 +14,7 @@ resource "aws_vpc" "main" {
 // Public subnets
 resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.main.id
-  availability_zone       = "eu-west-2a"
+  availability_zone       = "${var.region}a"
   map_public_ip_on_launch = true
   cidr_block              = cidrsubnet(var.vpc_cidr, 8, 2)
   tags = {
@@ -26,7 +26,7 @@ resource "aws_subnet" "public_subnet_1" {
 
 resource "aws_subnet" "public_subnet_2" {
   vpc_id                  = aws_vpc.main.id
-  availability_zone       = "eu-west-2b"
+  availability_zone       = "${var.region}b"
   map_public_ip_on_launch = true
   cidr_block              = cidrsubnet(var.vpc_cidr, 8, 3)
 
@@ -39,7 +39,7 @@ resource "aws_subnet" "public_subnet_2" {
 // Private subnets
 resource "aws_subnet" "private_subnet_1" {
   vpc_id            = aws_vpc.main.id
-  availability_zone = "eu-west-2a"
+  availability_zone = "${var.region}a"
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 0)
 
   tags = {
@@ -50,7 +50,7 @@ resource "aws_subnet" "private_subnet_1" {
 
 resource "aws_subnet" "private_subnet_2" {
   vpc_id            = aws_vpc.main.id
-  availability_zone = "eu-west-2b"
+  availability_zone = "${var.region}b"
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, 1)
   ipv6_cidr_block   = null
   tags = {
@@ -232,7 +232,7 @@ tags = {
 resource "aws_vpc_endpoint" "ec2" {
   vpc_id       = aws_vpc.main.id
   subnet_ids   = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  service_name = "com.amazonaws.eu-west-2.ec2"
+  service_name = "com.amazonaws.${var.region}.ec2"
   vpc_endpoint_type = "Interface"
   security_group_ids = [
     aws_security_group.sg.id, aws_security_group.rds.id
@@ -243,7 +243,7 @@ resource "aws_vpc_endpoint" "ec2" {
 resource "aws_vpc_endpoint" "ec2messages" {
   vpc_id       = aws_vpc.main.id
   subnet_ids   = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  service_name = "com.amazonaws.eu-west-2.ec2messages"
+  service_name = "com.amazonaws.${var.region}.ec2messages"
   vpc_endpoint_type = "Interface"
   security_group_ids = [
     aws_security_group.sg.id, aws_security_group.rds.id
@@ -254,7 +254,7 @@ resource "aws_vpc_endpoint" "ec2messages" {
 resource "aws_vpc_endpoint" "ssmmessages" {
   vpc_id       = aws_vpc.main.id
   subnet_ids   = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  service_name = "com.amazonaws.eu-west-2.ssmmessages"
+  service_name = "com.amazonaws.${var.region}.ssmmessages"
   vpc_endpoint_type = "Interface"
   security_group_ids = [
     aws_security_group.sg.id, aws_security_group.rds.id
@@ -265,7 +265,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id       = aws_vpc.main.id
   subnet_ids   = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-  service_name = "com.amazonaws.eu-west-2.ssm"
+  service_name = "com.amazonaws.${var.region}.ssm"
   vpc_endpoint_type = "Interface"
   security_group_ids = [
     aws_security_group.sg.id, aws_security_group.rds.id
