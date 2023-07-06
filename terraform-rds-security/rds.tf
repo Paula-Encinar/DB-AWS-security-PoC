@@ -15,7 +15,7 @@ resource "aws_db_instance" "primary_rds_instance" {
   engine                   = "postgres"
   engine_version           = "14.4"
   instance_class           = var.rds_instance_type
-  db_name                  = "db-avs-${var.environment}"
+  db_name                  = "postgres"
   identifier               = "avs-db-${var.environment}"
   username                 = "db_user_admin"
   password                 = random_password.random_admin_password.result
